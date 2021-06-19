@@ -1,12 +1,13 @@
 // jshint esversion: 9
 if ('undefined' !== typeof require) {
   TestData = require('./TestData');
-  MockData = require('./Tests/MockData');
+  MockData = require('./MockData');
   fp = require('./FP');
-}
+} 
 
 const ENV = 'undefined' !== typeof ScriptApp ? 'dev' : 'prod';
-const testingData = new MockData().addData('user', TestData);
+const testingData = 'undefined' !== typeof MockData ? new MockData().addData('user', TestData) : {};
+// const testingData = new MockData().addData('user', TestData);
 
 const User = {};
 

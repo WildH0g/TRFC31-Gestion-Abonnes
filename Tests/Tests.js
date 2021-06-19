@@ -2,6 +2,7 @@
 if (typeof require !== 'undefined') {
   UnitTestingApp = require('./UnitTestingApp');
   User = require('../App');
+  DriveFile = require('../DriveFile');
 }
 
 /*****************
@@ -69,8 +70,6 @@ function runTests() {
     return null === User.getUser(lukesId);
   }, 'Luc removed from data');
 
-
-
   console.log();
   test.printHeader('LOCAL TESTS - Payments');
 
@@ -86,7 +85,7 @@ function runTests() {
     User.addPayment(userId, {
       date: fp.formatDate(now),
       sum: 99,
-      paidUntil: fp.addTime(now, 'year', 1)
+      paidUntil: fp.addTime(now, 'year', 1),
     });
     const user = User.getUser(userId);
     return 99 === user.payments[2].sum;
@@ -97,9 +96,7 @@ function runTests() {
     User.deletePayment(userId, 0);
     const payments = User.getPayments(userId);
     return 99.9 === payments[0].sum;
-  }, 'User\'s payment deleted');
-
-
+  }, "User's payment deleted");
 
   console.log();
   test.printHeader('LOCAL TESTS - Payments');
@@ -109,46 +106,77 @@ function runTests() {
     const reps = User.getLegalReps(userId);
     return Array.isArray(reps) && 'object' === typeof reps[0];
   }, 'Legal representatives extracted');
-  
+
   test.assert(() => {
     const userId = 'user_hash_id_01';
     User.addLegalRep(userId, {
       firstName: 'Celine',
       lastName: 'Dion',
-      emails: [
-        'celine@outlook.com'
-      ], 
-      phones: [
-        '0644321578'
-      ],
-      birthDate: '1982-11-04'
+      emails: ['celine@outlook.com'],
+      phones: ['0644321578'],
+      birthDate: '1982-11-04',
     });
     const legalReps = User.getLegalReps(userId);
-    
+
     return 'Dion' === legalReps[legalReps.length - 1].lastName;
-    
   }, 'New legal rep added');
-  
+
   test.assert(() => {
     const userId = 'user_hash_id_01';
     User.deleteLegalRep(userId, 0);
     const legalReps = User.getLegalReps(userId);
     return 'Jacques' !== legalReps[0].firstName;
-    
   }, 'Removed first rep');
-  
+
   test.assert(() => {
     const userId = 'user_hash_id_01';
     User.updateLegalRep(userId, 0, [['firstName', 'Céline']]);
     const legalReps = User.getLegalReps(userId);
     return 'Céline' === legalReps[0].firstName;
-  }, 'Céline\'s name now has an accent');
+  }, "Céline's name now has an accent");
 
   test.runInGas(true);
   test.printHeader('ONLINE TESTS');
   /************************
    * Run Online Tests Here
    ************************/
+
+  const driveFile = new DriveFile('test-trfc-membres.json');
+
+  test.assert(() => {
+    driveFile.createFile('Hello World');
+    const fileContent = DriveApp.getFileById(driveFile.fileId)
+      .getBlob()
+      .getDataAsString();
+    return 'Hello World' === fileContent;
+  }, 'File created successfully');
+
+  test.assert(
+    () => {
+      return 'Hello World' === driveFile.readFile();
+    },
+    'File read successfully'
+  );
+
+  test.assert(
+    () => {
+      const content = driveFile.readFile();
+      driveFile.updateFile(`${content}!!!`);
+      return 'Hello World!!!' === driveFile.readFile();
+    },
+    'File updated successfully'
+  );
+
+  test.catchErr(
+    () => {
+      driveFile.removeFile();
+      const newDriveFile = new DriveFile('test-trfc-membres.json');
+      newDriveFile.readFile();
+    },
+    'Le fichier test-trfc-membres.json n\'exite pas',
+    'File removed successfully'
+  );
+
 }
 
 /**

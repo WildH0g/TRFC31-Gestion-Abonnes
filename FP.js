@@ -33,4 +33,4 @@ fp.addTime = (date, period, amount, formatted = true) => {
     : setPeriod[period](date, amount);  
 };
 
-if ('undefined' !== module) module.exports = fp;
+if ('undefined' !== typeof module) module.exports = fp;

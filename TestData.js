@@ -34,4 +34,4 @@ const TestData = {
 
 };
 
-if ('undefined' !== module) module.exports = TestData;
+if ('undefined' !== typeof module) module.exports = TestData;

@@ -2,7 +2,7 @@
 /**
  * Stores mock data that's not available locally to enable offline testing. 
  */
-let MockData = (function() {
+const MockData = (function() {
   const _registry = new WeakMap();
   
   class MockData {
@@ -49,5 +49,7 @@ let MockData = (function() {
   }
   return MockData;
 })();
+
+const tmd = () => MockData;
 
 if (typeof module !== 'undefined') module.exports = MockData;
