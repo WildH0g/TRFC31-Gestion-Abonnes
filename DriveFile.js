@@ -27,9 +27,10 @@ const DriveFile = (function() {
       return this;
     }
 
-    readFile() {
+    readFile(format = 'json') {
       if (null === this.file) throw new Error(`Le fichier ${this.fileName} n'exite pas`);
-      return this.file.getBlob().getDataAsString();
+      const fileContent = this.file.getBlob().getDataAsString();
+      return 'json' === format ? JSON.parse(fileContent) : fileContent;
     }
 
     removeFile() {

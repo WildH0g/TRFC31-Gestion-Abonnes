@@ -141,7 +141,10 @@ function runTests() {
    * Run Online Tests Here
    ************************/
 
-  const driveFile = new DriveFile('test-trfc-membres.json');
+  const driveFile =
+    'undefined' !== typeof DriveApp
+      ? new DriveFile('test-trfc-membres.json')
+      : {};
 
   test.assert(() => {
     driveFile.createFile('Hello World');
@@ -151,21 +154,15 @@ function runTests() {
     return 'Hello World' === fileContent;
   }, 'File created successfully');
 
-  test.assert(
-    () => {
-      return 'Hello World' === driveFile.readFile();
-    },
-    'File read successfully'
-  );
+  test.assert(() => {
+    return 'Hello World' === driveFile.readFile();
+  }, 'File read successfully');
 
-  test.assert(
-    () => {
-      const content = driveFile.readFile();
-      driveFile.updateFile(`${content}!!!`);
-      return 'Hello World!!!' === driveFile.readFile();
-    },
-    'File updated successfully'
-  );
+  test.assert(() => {
+    const content = driveFile.readFile();
+    driveFile.updateFile(`${content}!!!`);
+    return 'Hello World!!!' === driveFile.readFile();
+  }, 'File updated successfully');
 
   test.catchErr(
     () => {
@@ -173,10 +170,9 @@ function runTests() {
       const newDriveFile = new DriveFile('test-trfc-membres.json');
       newDriveFile.readFile();
     },
-    'Le fichier test-trfc-membres.json n\'exite pas',
+    "Le fichier test-trfc-membres.json n'exite pas",
     'File removed successfully'
   );
-
 }
 
 /**

@@ -3,39 +3,45 @@ if ('undefined' !== typeof require) {
   TestData = require('./TestData');
   MockData = require('./MockData');
   fp = require('./FP');
-} 
+}
 
-const ENV = 'undefined' !== typeof ScriptApp ? 'dev' : 'prod';
-const testingData = 'undefined' !== typeof MockData ? new MockData().addData('user', TestData) : {};
+const ENV = 'undefined' === typeof ScriptApp ? 'dev' : 'prod';
+const testingData =
+  'undefined' !== typeof MockData
+    ? new MockData().addData('user', TestData)
+    : {};
 // const testingData = new MockData().addData('user', TestData);
 
 const User = {};
 
 /**
- * 
+ *
  * Global methods for all users
- * 
+ *
  */
 
 User.listUsers = () => {
-  const data = testingData.getData('user');
+  console.log('listUsers(), ENV:', ENV);
+  const data =
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   return Object.entries(data).reduce((acc, user) => {
-    const [ userId, userData ] = user;
-    if(!(/^_/.test(userId))) {
-      acc.push(userId, userData.firstName);
+    const [userId, userData] = user;
+    if (!/^_/.test(userId)) {
+      acc.push([userId, userData.firstName]);
     }
     return acc;
   }, []);
 };
 
 /**
- * 
+ *
  * Working with user data
- * 
+ *
  */
 
 User.getUser = userId => {
-  const data = testingData.getData('user');
+  const data = 
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   if (!(userId in data)) return null;
   return data[userId];
 };
@@ -62,9 +68,9 @@ User.deleteUser = userId => {
 };
 
 /**
- * 
+ *
  * Working with payments
- * 
+ *
  */
 
 User.getPayments = userId => {
@@ -85,13 +91,11 @@ User.deletePayment = (userId, paymentIndex) => {
   return user.payments;
 };
 
-
 /**
- * 
+ *
  * Working with legal representatives
- * 
+ *
  */
-
 
 User.getLegalReps = userId => {
   const user = User.getUser(userId);
