@@ -64,48 +64,79 @@
               <div class="col">
                 <div class="row">
                   <div class="col-4">Nom</div>
-                  <div class="col-8"><input type="text" class="form-control" placeholder="Nom" aria-label="Username" aria-describedby="basic-addon1">
+                  <div class="col-8">
+                    <input type="text" 
+                      class="form-control user lastName" 
+                      placeholder="Nom"
+                      data-field="lastName"
+                    >
                   </div>
                 </div>
               <div class="col">
                 <div class="row">
                   <div class="col-4">Prénom</div>
-                  <div class="col-8"><input type="text" class="form-control" placeholder="Prénom" aria-label="Username" aria-describedby="basic-addon1"></div>
+                  <div class="col-8">
+                    <input type="text" 
+                      class="form-control user firstName" 
+                      placeholder="Prénom"
+                      data-field="firstName"
+                      >
+                  </div>
                 </div>
               </div>
               <div class="col">
                 <div class="row">
                   <div class="col-4">Date de naissaince</div>
-                  <div class="col-8"><input type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1"></div>
+                  <div class="col-8">
+                    <input type="date" 
+                      class="form-control user birthDate"
+                      data-field="birthDate"
+                    >
+                  </div>
                 </div>
               </div>
               <div class="col">
                 <div class="row">
                   <div class="col-4">Lieu de naissance</div>
-                  <div class="col-8"><input type="text" class="form-control" placeholder="Lieu de naissance" aria-label="Username" aria-describedby="basic-addon1"></div>
+                  <div class="col-8">
+                    <input type="text" 
+                      class="form-control user birthPlace" 
+                      placeholder="Lieu de naissance"
+                      data-field="birthPlace"
+                    >
+                  </div>
                 </div>
               </div>
               <div class="col">
                 <div class="row">
                   <div class="col-4">Adresse</div>
-                  <div class="col-8"><input type="text" class="form-control" placeholder="Adresse" aria-label="Username" aria-describedby="basic-addon1"></div>
+                  <div class="col-8">
+                    <input type="text" 
+                      class="form-control user address" 
+                      placeholder="Adresse" 
+                      data-field="address"
+                    >
+                  </div>
                 </div>
               </div>
               <div class="col">
                 <div class="row">
                   <div class="col-4">Téléphone</div>
-                  <div class="col-8"><input type="text" class="form-control" placeholder="Téléphone" aria-label="Username" aria-describedby="basic-addon1"></div>
+                  <div class="col-8">
+                    <input type="text" 
+                      class="form-control user phone" 
+                      placeholder="Téléphone"
+                      data-field="phone"
+                    >
+                  </div>
                 </div>
               </div>
             </div>
             <div class="col-6">
               <div class="row">
                 <div class="col-11">
-                  <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                  <select class="form-select legal-reps" aria-label="Default select example">
+                    <option selected>Chargement...</option>
                   </select>
                 </div>
                 <div class="col-1">
@@ -114,45 +145,35 @@
               </div>
               <div class="row">
                 <div class="col-4">Nom</div>
-                <div class="col-8"><input type="text" class="form-control" placeholder="Nom" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8"><input type="text" class="form-control legal-rep lastName" placeholder="Nom" aria-label="Username" aria-describedby="basic-addon1"></div>
               </div>
               <div class="row">
                 <div class="col-4">Pr&eacute;nom</div>
-                <div class="col-8"><input type="text" class="form-control" placeholder="Prénom" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8"><input type="text" class="form-control legal-rep firstName" placeholder="Prénom" aria-label="Username" aria-describedby="basic-addon1"></div>
               </div>
               <div class="row">
                 <div class="col-4">Emails</div>
                 <div class="col-8">
-                  <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                  </select>
+                  <textarea class="form-control legal-rep emails" aria-label="Default select example"></textarea>
                 </div>
               </div>
               <div class="row">
                 <div class="col-4">T&eacute;l&eacute;phones</div>
                 <div class="col-8">
-                  <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                  </select>
+                  <textarea class="form-control legal-rep phones" aria-label="Default select example"></textarea>
                 </div>
               </div>
               <div class="row">
                 <div class="col-4">Date de naissance</div>
-                <div class="col-8"><input type="date" class="form-control" placeholder="Date de naissance" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8"><input type="date" class="form-control legal-rep birthDate" placeholder="Date de naissance" aria-label="Username" aria-describedby="basic-addon1"></div>
               </div>
               <div class="row">
                 <div class="col-4">Profession</div>
-                <div class="col-8"><input type="text" class="form-control" placeholder="Profession" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8"><input type="text" class="form-control legal-rep profession" placeholder="Profession" aria-label="Username" aria-describedby="basic-addon1"></div>
               </div>
               <div class="row">
                 <div class="col-4">Adresse</div>
-                <div class="col-8"><input type="text" class="form-control" placeholder="Adresse" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8"><input type="text" class="form-control legal-rep address" placeholder="Adresse" aria-label="Username" aria-describedby="basic-addon1"></div>
               </div>
               <div class="row">
                 <div class="col">
@@ -175,15 +196,15 @@
               <th>Date</th>
               <th>Somme</th>
               <th>P&eacute;riode</th>
-              <th></th>
+              <th>Supprimer</th>
             </thead>
-            <tbody>
-              <tr>
+            <tbody class="payments">
+              <!-- <tr>
                 <td>2020-09-15</td>
                 <td>100 &euro;</td>
                 <td>2021-12-31</td>
                 <td><button class="btn btn-danger">-</button></td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>
@@ -197,7 +218,6 @@
   </div>
   <script>
     const isLocal = (/127\.0\.0\.1/.test(window.location.href));
-    let queries = {};
     ;(() => {
       if (!isLocal) return console.log('Running online');
       console.log('Running locally');
@@ -205,6 +225,8 @@
       const scripts = [
         'TestData.js',
         'MockData.js',
+        'Utils.ignore.js',
+        'App.js',
         'UserManagement.ignore.js'
       ];
 

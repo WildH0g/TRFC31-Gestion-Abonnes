@@ -5,17 +5,34 @@ const TestData = {
     firstName: 'Jean-Louis',
     lastName: 'Dupond',
     birthDate: '2010-03-23',
+    birthPlace: 'Toulouse',
+    phone: '+33725889634878',
+    address: '27 rue Charles de Gaulles',
     legalReps: [
       {
         firstName: 'Jacques',
         lastName: 'Prévert',
         emails: [
-          'jacques39@yahoo.com'
+          'jacques39@yahoo.com',
+          'jprev@renault.fr'
         ], 
         phones: [
           '0614543222'
         ],
-        birthDate: '1970-03-23'
+        birthDate: '1970-03-23',
+        profession: 'ingénieur',
+        address: '1, place de l\'Etoile, 11111 Toulouse'
+      },
+      {
+        firstName: 'Manon',
+        lastName: 'Dupond',
+        emails: [
+          'mdupond@outlook.com'
+        ], 
+        phones: [
+          '0658779321'
+        ],
+        birthDate: '1983-05-07'
       }
     ],
     payments: [

@@ -3,12 +3,14 @@
 const fs = require('fs');
 
 const scriptFiles = [
-  'UserManagement.ignore.js'
+  'UserManagement.ignore.js',
+  'Utils.ignore.js',
 ];
 
 
 const htmlFiles = [
-  'UserManagementJS.html'
+  'UserManagementJS.html',
+  'UtilsJS.html'
 ];
 
 const copy = (source, target, i = 0) => {
