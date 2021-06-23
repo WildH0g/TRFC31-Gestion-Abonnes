@@ -184,6 +184,13 @@ const updateUserObj = (property, value) => {
   return USER;
 };
 
+const updateLegalRep = (property, value) => {
+  const index = document.querySelector('select.legal-reps').value;
+  if ('' === index) return;
+  USER.legalReps[index][property] = value;
+  return USER;
+};
+
 document.addEventListener('userlistLoaded', handleUserList);
 document.addEventListener('userLoaded', handleUser);
 
@@ -198,6 +205,17 @@ document
 document.querySelectorAll('.user').forEach(field => {
   field.addEventListener('change', e => {
     updateUserObj(field.dataset.field, e.target.value);
+  });
+});
+
+document.querySelectorAll('.legal-rep').forEach(field => {
+  field.addEventListener('change', e => {
+    const value =
+      'textarea' === field.type
+        ? e.target.value.split(',').map(val => val.trim())
+        : e.target.value;
+
+    updateLegalRep(field.dataset.field, value);
   });
 });
 

@@ -132,7 +132,23 @@ const populateLegalReps = userObj => {
   return userObj;
 };
 
-const handleUser = pipe(extractUser, populateUserData, populateLegalReps);
+const populatePayments = userObj => {
+  const { payments } = userObj;
+  const html = payments
+    .map(payment => {
+      return `<tr><td>${payment.date}</td><td>${payment.sum}</td><td>${payment.paidUntil}</td><td><button class="btn btn-danger">-</button></td></tr>`;
+    })
+    .join('');
+  document.querySelector('.payments').innerHTML = html;
+  return userObj;
+};
+
+const handleUser = pipe(
+  extractUser,
+  populateUserData,
+  populateLegalReps,
+  populatePayments
+);
 
 const showLegalRep = e => {
   const repId = e.target.value;
@@ -156,10 +172,24 @@ const showLegalRep = e => {
   fields.forEach(field => {
     const el = getElement(field);
     console.log(`got element: ${el}`);
-    if (el && field in rep) el.value = rep[field];
+    if (!el) return;
+    if (rep && field in rep) el.value = rep[field];
+    else el.value = '';
   });
 
   return rep;
+};
+
+const updateUserObj = (property, value) => {
+  USER[property] = value;
+  return USER;
+};
+
+const updateLegalRep = (property, value) => {
+  const index = document.querySelector('select.legal-reps').value;
+  if ('' === index) return;
+  USER.legalReps[index][property] = value;
+  return USER;
 };
 
 document.addEventListener('userlistLoaded', handleUserList);
@@ -172,6 +202,23 @@ document
 document
   .querySelector('select.legal-reps')
   .addEventListener('change', showLegalRep);
+
+document.querySelectorAll('.user').forEach(field => {
+  field.addEventListener('change', e => {
+    updateUserObj(field.dataset.field, e.target.value);
+  });
+});
+
+document.querySelectorAll('.legal-rep').forEach(field => {
+  field.addEventListener('change', e => {
+    const value =
+      'textarea' === field.type
+        ? e.target.value.split(',').map(val => val.trim())
+        : e.target.value;
+
+    updateLegalRep(field.dataset.field, value);
+  });
+});
 
 requestUsers();
 

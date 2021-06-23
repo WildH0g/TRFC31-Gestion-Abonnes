@@ -36,7 +36,6 @@
           </div>
           <div class="col">
             <button type="button" class="btn btn-danger">Supprimer</button>
-            <button type="button" class="btn btn-warning">Modifier</button>
             <button type="button" class="btn btn-success">Ajouter</button>
           </div>
           <div class="col">
@@ -145,35 +144,73 @@
               </div>
               <div class="row">
                 <div class="col-4">Nom</div>
-                <div class="col-8"><input type="text" class="form-control legal-rep lastName" placeholder="Nom" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8">
+                  <input 
+                    type="text" 
+                    class="form-control legal-rep lastName" 
+                    data-field="lastName"
+                    placeholder="Nom"
+                  >
+                </div>
               </div>
               <div class="row">
                 <div class="col-4">Pr&eacute;nom</div>
-                <div class="col-8"><input type="text" class="form-control legal-rep firstName" placeholder="Prénom" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8">
+                  <input type="text" 
+                    class="form-control legal-rep firstName" 
+                    placeholder="Prénom"
+                    data-field="firstName"
+                  >
+                </div>
               </div>
               <div class="row">
                 <div class="col-4">Emails</div>
                 <div class="col-8">
-                  <textarea class="form-control legal-rep emails" aria-label="Default select example"></textarea>
+                  <textarea 
+                    class="form-control legal-rep emails" 
+                    data-field="emails"
+                  ></textarea>
                 </div>
               </div>
               <div class="row">
                 <div class="col-4">T&eacute;l&eacute;phones</div>
                 <div class="col-8">
-                  <textarea class="form-control legal-rep phones" aria-label="Default select example"></textarea>
+                  <textarea 
+                    class="form-control legal-rep phones" 
+                    data-field="phones"
+                  ></textarea>
                 </div>
               </div>
               <div class="row">
                 <div class="col-4">Date de naissance</div>
-                <div class="col-8"><input type="date" class="form-control legal-rep birthDate" placeholder="Date de naissance" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8">
+                  <input type="date" 
+                    class="form-control legal-rep birthDate" 
+                    placeholder="Date de naissance"
+                    data-field="birthDate"
+                  >
+                </div>
               </div>
               <div class="row">
                 <div class="col-4">Profession</div>
-                <div class="col-8"><input type="text" class="form-control legal-rep profession" placeholder="Profession" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8">
+                  <input type="text" 
+                    class="form-control legal-rep profession" 
+                    placeholder="Profession"
+                    data-field="profession"
+                    >
+                </div>
               </div>
               <div class="row">
                 <div class="col-4">Adresse</div>
-                <div class="col-8"><input type="text" class="form-control legal-rep address" placeholder="Adresse" aria-label="Username" aria-describedby="basic-addon1"></div>
+                <div class="col-8">
+                  <input 
+                    type="text" 
+                    class="form-control legal-rep address" 
+                    placeholder="Adresse" 
+                    data-field="address"
+                  >
+                </div>
               </div>
               <div class="row">
                 <div class="col">
