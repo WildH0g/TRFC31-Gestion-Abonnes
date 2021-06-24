@@ -182,6 +182,10 @@ const showLegalRep = e => {
 
 const updateUserObj = (property, value) => {
   USER[property] = value;
+  if ('undefined' !== typeof google) {
+    const userId =  document.querySelector('select.user-list').value;
+    google.script.run.runFunc('updateUser', [userId, [[property, value]]]);
+  }
   return USER;
 };
 
@@ -189,7 +193,34 @@ const updateLegalRep = (property, value) => {
   const index = document.querySelector('select.legal-reps').value;
   if ('' === index) return;
   USER.legalReps[index][property] = value;
+  if ('undefined' !== typeof google) {
+    const userId =  document.querySelector('select.user-list').value;
+    google.script.run.runFunc('updateLegalRep', [userId, index, [[property, value]]]);
+  }
   return USER;
+};
+
+const addLegalRep = () => {
+  if ('undefined' !== typeof google) {
+    const userId =  document.querySelector('select.user-list').value;
+    google.script.run.runFunc('addLegalRep', [userId, {lastName: 'nouveau'}]);
+  }
+  USER.legalReps.push({});
+  const len = USER.legalReps.length;
+  const select = document.querySelector('select.legal-reps');
+  select.innerHTML += `<option value="${len - 1}">Nouveau responsable légal</option>`;
+  select.value = len - 1;
+  select.dispatchEvent(new Event('change'));
+};
+
+const removeLegalRep = () => {
+  const index = document.querySelector('select.legal-reps').value;
+  USER.legalReps.splice(index, 1);
+  populateLegalReps(USER);
+  if ('undefined' !== typeof google) {
+    const userId =  document.querySelector('select.user-list').value;
+    google.script.run.runFunc('deleteLegalRep', [userId, index]);
+  }
 };
 
 document.addEventListener('userlistLoaded', handleUserList);

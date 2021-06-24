@@ -1,5 +1,7 @@
 // jshint esversion: 9
 
+if ('undefined' !== typeof require) MockData = require('./MockData');
+
 let USER = {};
 
 const onSuccess = data => {
@@ -9,7 +11,7 @@ const onSuccess = data => {
 
 const onFailure = data => {};
 
-const requestUsers = () => {
+const requestUsers = e => {
   console.log('requestUsers()');
   const func = 'listUsers';
   const args = [];
@@ -39,7 +41,7 @@ const requestUsers = () => {
 
 const receiveUsers = e => {
   console.log('receiveUsers()', e.detail);
-  return e.detail;
+  return e.detail ? e.detail : e;
 };
 
 const addUsersToSelect = userList => {
@@ -88,8 +90,9 @@ const getUserData = e => {
 };
 
 const extractUser = e => {
+  console.log('extractUser() from event', e);
   const user = e.detail.user;
-  console.log(`extractUser(): ${user}`);
+  console.log(`extractUser(): ${JSON.stringify(user, null, 2)}`);
   return user;
 };
 
@@ -109,30 +112,36 @@ const populateUserData = userObj => {
 
   fields.forEach(field => {
     const el = getElement(field);
-    console.log(`got element: ${el}`);
+    console.log(`got element: ${el.tagName}`);
     if (el && field in userObj) el.value = userObj[field];
+    else el.value = '';
   });
 
   return userObj;
 };
 
 const populateLegalReps = userObj => {
+  console.log('populateLegalReps()', userObj);
   const { legalReps } = userObj;
   if (!legalReps) return userObj;
   const select = document.querySelector('select.legal-reps');
-  const html =
-    '<option value="">Selectionnez un représentant légal</option>' +
-    legalReps
-      .map((rep, i) => {
-        return `<option value="${i}">${rep.firstName} ${rep.lastName}</option>`;
-      })
-      .join('');
+  let html = '';
+  if (legalReps.length)
+    html +=
+      '<option value="">Selectionnez un représentant légal</option>' +
+      legalReps
+        .map((rep, i) => {
+          return `<option value="${i}">${rep.firstName} ${rep.lastName}</option>`;
+        })
+        .join('');
+  else html += '<option value="">Aucun représentant légal</option>';
   select.innerHTML = html;
   return userObj;
 };
 
 const populatePayments = userObj => {
   const { payments } = userObj;
+  console.log('populatePayments', userObj, payments);
   const html = payments
     .map(payment => {
       return `<tr><td>${payment.date}</td><td>${payment.sum}</td><td>${payment.paidUntil}</td><td><button class="btn btn-danger">-</button></td></tr>`;
@@ -181,6 +190,10 @@ const showLegalRep = e => {
 
 const updateUserObj = (property, value) => {
   USER[property] = value;
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('updateUser', [userId, [[property, value]]]);
+  }
   return USER;
 };
 
@@ -188,7 +201,76 @@ const updateLegalRep = (property, value) => {
   const index = document.querySelector('select.legal-reps').value;
   if ('' === index) return;
   USER.legalReps[index][property] = value;
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('updateLegalRep', [
+      userId,
+      index,
+      [[property, value]],
+    ]);
+  }
   return USER;
+};
+
+const addLegalRep = () => {
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('addLegalRep', [userId, { lastName: 'nouveau' }]);
+  }
+  USER.legalReps.push({});
+  const len = USER.legalReps.length;
+  const select = document.querySelector('select.legal-reps');
+  select.innerHTML += `<option value="${
+    len - 1
+  }">Nouveau responsable légal</option>`;
+  select.value = len - 1;
+  select.dispatchEvent(new Event('change'));
+};
+
+const removeLegalRep = () => {
+  const index = document.querySelector('select.legal-reps').value;
+  USER.legalReps.splice(index, 1);
+  populateLegalReps(USER);
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('deleteLegalRep', [userId, index]);
+  }
+};
+
+const addUser = () => {
+  console.log('addUser()');
+  USER = {
+    legalReps: [],
+    payments: [],
+  };
+
+  const userId = sha256(Date.now() + randStr(30));
+  const userCopy = JSON.parse(JSON.stringify(USER));
+
+  const showNewUser = id => {
+    console.log('receiving event userAdded');
+    const select = document.querySelector('select.user-list');
+    select.innerHTML += `<option value="${userId}">Nouvel ahérent</option>`;
+    select.value = id;
+    console.log('dispatching event with new user', userCopy);
+    document.dispatchEvent(
+      new CustomEvent('userLoaded', { detail: { user: userCopy } })
+    );
+  };
+
+  if ('undefined' !== typeof google) {
+    google.script.run
+      .withSuccessHandler(resonse => {
+        document.dispatchEvent(new Event('userAdded'));
+      })
+      .runFunc('addUser', [userId, USER]);
+  } else {
+    const md = new MockData();
+    const users = md.getData('user');
+    console.log('adding user to users', users);
+    users[userId] = userCopy;
+    showNewUser(userId);
+  }
 };
 
 document.addEventListener('userlistLoaded', handleUserList);

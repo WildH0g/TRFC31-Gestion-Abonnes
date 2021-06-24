@@ -36,10 +36,7 @@
           </div>
           <div class="col">
             <button type="button" class="btn btn-danger">Supprimer</button>
-            <button type="button" class="btn btn-success">Ajouter</button>
-          </div>
-          <div class="col">
-            <button class="btn btn-primary float-end">Sauvegarder</button>
+            <button type="button" class="btn btn-success" onclick="addUser()">Ajouter</button>
           </div>
         </div>
       </div>
@@ -139,7 +136,7 @@
                   </select>
                 </div>
                 <div class="col-1">
-                  <button class="btn btn-danger">-</button>
+                  <button class="btn btn-danger" onclick="removeLegalRep()">-</button>
                 </div>
               </div>
               <div class="row">
@@ -215,7 +212,7 @@
               <div class="row">
                 <div class="col">
                   <center>
-                    <button class="btn-primary">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</button>
+                    <button class="btn-primary" onclick="addLegalRep()">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</button>
                   </center>
                 </div>
               </div>
@@ -280,6 +277,7 @@
 
     })();
   </script>
+  <?!= include("UtilsJS") ?>
   <?!= include("UserManagementJS") ?>
 </body>
 </html> 

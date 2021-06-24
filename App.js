@@ -47,16 +47,21 @@ User.getUser = userId => {
 };
 
 User.addUser = (userId, userObj) => {
-  const data = testingData.getData('user');
+  const data = 
+  'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  if (!(userId in data)) return null;
   data[userId] = userObj;
   return data;
 };
 
 User.updateUser = (userId, userDataAr) => {
-  const data = testingData.getData('user');
+  console.log('updateUser()', userId, userDataAr);
+  const data =
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   for (let row of userDataAr) {
     data[userId][row[0]] = row[1];
   }
+  new DriveFile().updateFile(JSON.stringify(data));
   return data;
 };
 
@@ -102,26 +107,38 @@ User.getLegalReps = userId => {
   return user.legalReps;
 };
 
-User.addLegalRep = (userId, repObj) => {
-  const user = User.getUser(userId);
+User.addLegalRep = (userId, repObj = {}) => {
+  const data = 
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
+  const reps = user.legalReps;
   if (!user.legalReps) user.legalReps = [];
-  user.legalReps.push(repObj);
+  reps.push(repObj);
+  new DriveFile().updateFile(JSON.stringify(data));
   return user.legalReps;
 };
 
 User.deleteLegalRep = (userId, repIndex) => {
-  const user = User.getUser(userId);
-  user.legalReps.splice(repIndex, 1);
+  const data = 
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
+  const reps = user.legalReps;
+  reps.splice(repIndex, 1);
+  new DriveFile().updateFile(JSON.stringify(data));
   return user.legalReps;
 };
 
 User.updateLegalRep = (userId, repIndex, repsDataAr) => {
-  const reps = User.getLegalReps(userId);
+  const data = 
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
+  const reps = user.legalReps;
   const rep = reps[repIndex];
   for (let row of repsDataAr) {
     rep[row[0]] = row[1];
   }
-  return reps;
+  new DriveFile().updateFile(JSON.stringify(data));
+  return rep;
 };
 
 if ('undefined' !== typeof module) module.exports = User;
