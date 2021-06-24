@@ -106,11 +106,14 @@ const populateUserData = userObj => {
     'birthPlace',
     'address',
     'phone',
+    'license',
+    'comments'
   ];
 
-  const getElement = element => document.querySelector(`input.user.${element}`);
+  const getElement = element => document.querySelector(`input.user.${element},textarea.user.${element}`);
 
   fields.forEach(field => {
+    console.log('field', field);
     const el = getElement(field);
     console.log(`got element: ${el.tagName}`);
     if (el && field in userObj) el.value = userObj[field];
@@ -160,6 +163,11 @@ const handleUser = pipe(
 
 const showLegalRep = e => {
   const repId = e.target.value;
+  console.log('showLegalRep, repId', repId);
+  const blockClass = document.querySelector('div.legal-reps-block').classList;
+  if ('' === repId) return blockClass.add('v-hidden');
+  else blockClass.remove('v-hidden');
+  console.log('blockClass', blockClass);
   const rep = USER.legalReps[repId];
   console.log(rep);
   console.log('showLegalRep()');
@@ -261,7 +269,7 @@ const addUser = () => {
   if ('undefined' !== typeof google) {
     google.script.run
       .withSuccessHandler(resonse => {
-        document.dispatchEvent(new Event('userAdded'));
+        showNewUser(userId);
       })
       .runFunc('addUser', [userId, USER]);
   } else {
@@ -271,6 +279,35 @@ const addUser = () => {
     users[userId] = userCopy;
     showNewUser(userId);
   }
+};
+
+const deleteUser = () => {
+  USER = {};
+  const userId = document.querySelector('select.user-list').value;
+  if ('undefined' !== typeof google) {
+    google.script.run
+      .withSuccessHandler(response => {
+        console.log('delete succeeded:', response);
+        resetForm();
+        requestUsers();
+      })
+      .runFunc('deleteUser', [userId]);
+  } else {
+    const md = new MockData();
+    const users = md.getData('user');
+    console.log('deleting user from users', users);
+    delete users[userId];
+    resetForm();
+    requestUsers();
+  }
+};
+
+const resetForm = () => {
+  document.querySelectorAll('.user, .legal-rep, select')
+    .forEach(el => el.value = '');
+  document.querySelector('select.legal-reps').innerHTML =
+    '<option value="">Aucun représentant légal</option>';
+  document.querySelector('tbody.payments').innerHTML = '';
 };
 
 document.addEventListener('userlistLoaded', handleUserList);

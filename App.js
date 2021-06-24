@@ -48,9 +48,11 @@ User.getUser = userId => {
 
 User.addUser = (userId, userObj) => {
   const data = 
-  'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
-  if (!(userId in data)) return null;
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  if (userId in data) return null;
   data[userId] = userObj;
+  data._totalRecords++;
+  new DriveFile().updateFile(JSON.stringify(data));
   return data;
 };
 
@@ -66,10 +68,13 @@ User.updateUser = (userId, userDataAr) => {
 };
 
 User.deleteUser = userId => {
-  const data = testingData.getData('user');
-  if (!(userId in data)) return null;
+  const data = 
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  if (!(userId in data)) return false;
   delete data[userId];
-  return data;
+  data._totalRecords--;
+  new DriveFile().updateFile(JSON.stringify(data));
+  return true;
 };
 
 /**
