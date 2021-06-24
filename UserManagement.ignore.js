@@ -62,7 +62,11 @@ const handleUserList = pipe(receiveUsers, addUsersToSelect);
 const getUserData = e => {
   console.log('requestUsers()');
 
-  const userId = e.target.value;
+  const userBlock = document.querySelector('div.user-block').classList;
+  const selectedId = document.querySelector('select.user-list').value;
+  const userId = e.target.value || selectedId;
+  if ('' === userId) return userBlock.add('v-hidden');
+  else userBlock.remove('v-hidden');
 
   const func = 'getUser';
   const args = [userId];
@@ -254,6 +258,8 @@ const addUser = () => {
 
   const userId = sha256(Date.now() + randStr(30));
   const userCopy = JSON.parse(JSON.stringify(USER));
+
+  document.querySelector('div.user-block').classList.remove('v-hidden');
 
   const showNewUser = id => {
     console.log('receiving event userAdded');
