@@ -40,14 +40,14 @@ User.listUsers = () => {
  */
 
 User.getUser = userId => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   if (!(userId in data)) return null;
   return data[userId];
 };
 
 User.addUser = (userId, userObj) => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   if (userId in data) return null;
   data[userId] = userObj;
@@ -68,7 +68,7 @@ User.updateUser = (userId, userDataAr) => {
 };
 
 User.deleteUser = userId => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   if (!(userId in data)) return false;
   delete data[userId];
@@ -89,15 +89,23 @@ User.getPayments = userId => {
 };
 
 User.addPayment = (userId, paymentObj) => {
-  const user = User.getUser(userId);
+  const data =
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
   if (!user.payments) user.payments = [];
+  const payments = user.payments;
   user.payments.push(paymentObj);
+  new DriveFile().updateFile(JSON.stringify(data));
   return user.payments;
 };
 
 User.deletePayment = (userId, paymentIndex) => {
-  const user = User.getUser(userId);
-  user.payments.splice(paymentIndex, 1);
+  const data =
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
+  const payments = user.payments;
+  payments.splice(paymentIndex, 1);
+  new DriveFile().updateFile(JSON.stringify(data));
   return user.payments;
 };
 
@@ -113,7 +121,7 @@ User.getLegalReps = userId => {
 };
 
 User.addLegalRep = (userId, repObj = {}) => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   const user = data[userId];
   const reps = user.legalReps;
@@ -124,7 +132,7 @@ User.addLegalRep = (userId, repObj = {}) => {
 };
 
 User.deleteLegalRep = (userId, repIndex) => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   const user = data[userId];
   const reps = user.legalReps;
@@ -134,7 +142,7 @@ User.deleteLegalRep = (userId, repIndex) => {
 };
 
 User.updateLegalRep = (userId, repIndex, repsDataAr) => {
-  const data = 
+  const data =
     'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
   const user = data[userId];
   const reps = user.legalReps;
@@ -144,6 +152,43 @@ User.updateLegalRep = (userId, repIndex, repsDataAr) => {
   }
   new DriveFile().updateFile(JSON.stringify(data));
   return rep;
+};
+
+/**
+ *
+ * Working with picture
+ *
+ */
+
+User.uploadAvatar = (userId, obj) => {
+  var blob = Utilities.newBlob(
+    Utilities.base64Decode(obj.data),
+    obj.mimeType,
+    obj.fileName
+  );
+  console.log(`getting blob for user ${userId}: ${blob}`);
+  const targetFolderId = '1DqyFHtUE_f2XGvIQaBctXuZzRsrnW_Rf';
+
+  const data =
+    'dev' === ENV ? testingData.getData('user') : new DriveFile().readFile();
+  const user = data[userId];
+  const avatar = user.avatar;
+  const d = DriveApp;
+  if (avatar) {
+    try {
+      d.getFileById(avatar).setTrashed(true);
+    } catch (err) {
+      console.log(`Could not delete file ${avatar}`);
+    }
+  }
+  const avatarFile = d
+    .getFolderById(targetFolderId)
+    .createFile(blob)
+    .setName(userId)
+    .setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
+  user.avatar = avatarFile.getId();
+  new DriveFile().updateFile(JSON.stringify(data));
+  return avatar;
 };
 
 if ('undefined' !== typeof module) module.exports = User;

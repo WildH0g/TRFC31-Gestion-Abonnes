@@ -70,9 +70,8 @@ const getUserData = e => {
   if ('' === userId) {
     userBlock.add('v-hidden');
     resetForm();
-    return ;
-  }
-  else userBlock.remove('v-hidden');
+    return;
+  } else userBlock.remove('v-hidden');
 
   const func = 'getUser';
   const args = [userId];
@@ -117,10 +116,11 @@ const populateUserData = userObj => {
     'address',
     'phone',
     'license',
-    'comments'
+    'comments',
   ];
 
-  const getElement = element => document.querySelector(`input.user.${element},textarea.user.${element}`);
+  const getElement = element =>
+    document.querySelector(`input.user.${element},textarea.user.${element}`);
 
   fields.forEach(field => {
     console.log('field', field);
@@ -164,11 +164,22 @@ const populatePayments = userObj => {
   return userObj;
 };
 
+const showAvatar = userObj => {
+  if (undefined === userObj) userObj = USER;
+  const preview = document.querySelector('img.user-avatar');
+  preview.removeAttribute('src');
+  if (!userObj.avatar) return;
+  if ('undefined' === typeof google) return;
+  preview.src =
+    'https://drive.google.com/uc?export=view&id=' + userObj.avatar;
+};
+
 const handleUser = pipe(
   extractUser,
   populateUserData,
   populateLegalReps,
-  populatePayments
+  populatePayments,
+  showAvatar
 );
 
 const showLegalRep = e => {
@@ -315,6 +326,10 @@ const deleteUser = () => {
 };
 
 const deletePayment = index => {
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('deletePayment', [userId, index]);
+  }
   USER.payments.splice(index, 1);
   populatePayments(USER);
 };
@@ -332,17 +347,66 @@ const confirmPayment = () => {
   const date = document.querySelector('.new-payment-date').value;
   const sum = document.querySelector('.new-payment-amount').value;
   const paidUntil = document.querySelector('.new-payment-until').value;
-  USER.payments.push({date, sum, paidUntil});
+  if ('undefined' !== typeof google) {
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('addPayment', [userId, { date, sum, paidUntil }]);
+  }
+  USER.payments.push({ date, sum, paidUntil });
   populatePayments(USER);
 };
 
 const resetForm = () => {
-  document.querySelectorAll('.user, .legal-rep, select')
-    .forEach(el => el.value = '');
+  document
+    .querySelectorAll('.user, .legal-rep, select')
+    .forEach(el => (el.value = ''));
   document.querySelector('select.legal-reps').innerHTML =
     '<option value="">Aucun représentant légal</option>';
   document.querySelector('tbody.payments').innerHTML = '';
   USER = {};
+};
+
+const filterUsers = e => {
+  const searchString = e.target.value;
+  const re = new RegExp(searchString, 'i');
+  Array.from(document.querySelector('select').children).forEach(option => {
+    if ('' !== searchString.trim() && re.test(option)) {
+      option.setAttribute('selected', true);
+      option.parentElement.dispatchEvent(new Event('change'));
+    }
+  });
+};
+
+const uploadAvatar = e => {
+  // console.log('uploadAvatar()', e);
+  const preview = document.querySelector('img.user-avatar');
+  const file = document.querySelector('input[type=file].avatar-upload')
+    .files[0];
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    'load',
+    function () {
+      preview.src = reader.result;
+    },
+    false
+  );
+
+  reader.onloadend = function (e) {
+    if ('undefined' === typeof google) return;
+    const data = e.target.result.split(',');
+    const obj = {
+      fileName: file.name,
+      mimeType: data[0].match(/:(\w.+);/)[1],
+      data: data[1],
+    };
+    const userId = document.querySelector('select.user-list').value;
+    google.script.run.runFunc('uploadAvatar', [
+      userId,
+      obj,
+    ]);
+  };
+
+  reader.readAsDataURL(file);
 };
 
 document.addEventListener('userlistLoaded', handleUserList);
@@ -353,8 +417,16 @@ document
   .addEventListener('change', getUserData);
 
 document
+  .querySelector('input.user-filter')
+  .addEventListener('keypress', filterUsers);
+
+document
   .querySelector('select.legal-reps')
   .addEventListener('change', showLegalRep);
+
+document
+  .querySelector('input.avatar-upload')
+  .addEventListener('change', uploadAvatar);
 
 document.querySelectorAll('.user').forEach(field => {
   field.addEventListener('change', e => {
