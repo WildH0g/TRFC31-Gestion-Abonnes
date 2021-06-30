@@ -9,7 +9,9 @@ const onSuccess = data => {
   return data;
 };
 
-const onFailure = data => {};
+const onFailure = data => {
+  alert(`Une erreur est survenue: ${data}`);
+};
 
 const requestUsers = e => {
   console.log('requestUsers()');
@@ -65,7 +67,11 @@ const getUserData = e => {
   const userBlock = document.querySelector('div.user-block').classList;
   const selectedId = document.querySelector('select.user-list').value;
   const userId = e.target.value || selectedId;
-  if ('' === userId) return userBlock.add('v-hidden');
+  if ('' === userId) {
+    userBlock.add('v-hidden');
+    resetForm();
+    return ;
+  }
   else userBlock.remove('v-hidden');
 
   const func = 'getUser';
@@ -150,8 +156,8 @@ const populatePayments = userObj => {
   const { payments } = userObj;
   console.log('populatePayments', userObj, payments);
   const html = payments
-    .map(payment => {
-      return `<tr><td>${payment.date}</td><td>${payment.sum}</td><td>${payment.paidUntil}</td><td><button class="btn btn-danger">-</button></td></tr>`;
+    .map((payment, i) => {
+      return `<tr class="payment-row ${i}"><td>${payment.date}</td><td>${payment.sum}</td><td>${payment.paidUntil}</td><td><button onclick="deletePayment(${i})" class="btn btn-danger">-</button></td></tr>`;
     })
     .join('');
   document.querySelector('.payments').innerHTML = html;
@@ -308,12 +314,35 @@ const deleteUser = () => {
   }
 };
 
+const deletePayment = index => {
+  USER.payments.splice(index, 1);
+  populatePayments(USER);
+};
+
+const addPayment = () => {
+  if (!USER.payments) return;
+  console.log('adding payment');
+  populatePayments(USER);
+  const html = `<tr class="payment-row new-payment"><td><input type="date" class="new-payment new-payment-date" /></td><td><input type="number" class="new-payment new-payment-amount"/></td><td><input type="date" class="new-payment new-payment-until" /></td><td><button onclick="confirmPayment()" class="btn btn-primary">OK</button></td></tr>`;
+  document.querySelector('.payments').innerHTML += html;
+};
+
+const confirmPayment = () => {
+  console.log('confirmPayment()');
+  const date = document.querySelector('.new-payment-date').value;
+  const sum = document.querySelector('.new-payment-amount').value;
+  const paidUntil = document.querySelector('.new-payment-until').value;
+  USER.payments.push({date, sum, paidUntil});
+  populatePayments(USER);
+};
+
 const resetForm = () => {
   document.querySelectorAll('.user, .legal-rep, select')
     .forEach(el => el.value = '');
   document.querySelector('select.legal-reps').innerHTML =
     '<option value="">Aucun représentant légal</option>';
   document.querySelector('tbody.payments').innerHTML = '';
+  USER = {};
 };
 
 document.addEventListener('userlistLoaded', handleUserList);
